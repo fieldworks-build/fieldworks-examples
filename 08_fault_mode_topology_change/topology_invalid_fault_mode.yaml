@@ -1,0 +1,63 @@
+facility:
+  name: Example Pump Station
+  site_id: example-01
+  timezone: America/New_York
+
+process_areas:
+  - id: pumping
+    name: Pumping
+    description: Transfer pumps moving water from wet well to distribution.
+
+equipment_types:
+  - id: centrifugal_pump
+    name: Centrifugal Pump
+    description: Standard single-stage centrifugal transfer pump.
+    attributes:
+      - id: flow_rate
+        name: Flow Rate
+        units: gpm
+        data_type: numeric
+        normal_range:
+          min: 50
+          max: 500
+      - id: running
+        name: Running
+        units: bool
+        data_type: boolean
+        normal_state: true
+    fault_modes:
+      - id: cavitation
+        name: Cavitation
+        description: Flow rate dropping below normal while pump reports running.
+        severity: warning
+        affected_attributes: [flow_rate]
+        direction: below_min
+      - id: bearing_wear
+        name: Bearing Wear
+        description: Elevated vibration signature — not instrumented on this unit yet.
+        severity: warning
+        # 'vibration' isn't declared as an attribute above — a typo or a
+        # sensor nobody's wired up yet, either way the topology must catch it.
+        affected_attributes: [vibration]
+        direction: above_max
+
+equipment_instances:
+  - id: pump-101
+    name: Pump 101
+    type_id: centrifugal_pump
+    process_area_id: pumping
+    tag_bindings:
+      flow_rate: pump101.flow_rate
+      running: pump101.running
+  - id: pump-102
+    name: Pump 102
+    type_id: centrifugal_pump
+    process_area_id: pumping
+    tag_bindings:
+      flow_rate: pump102.flow_rate
+      running: pump102.running
+
+historian:
+  default_lookback_hours: 24
+  max_lookback_days: 30
+  resolution_seconds: 60
