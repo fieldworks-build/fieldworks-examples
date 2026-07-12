@@ -12,6 +12,8 @@ pip install -r requirements.txt
 
 Each example also documents its own dependencies in its README — most need nothing beyond `fieldworks-core`.
 
+One example (`09_hello_adapter`) is Rust, not Python — it's a standalone `cargo` crate with its own `Cargo.toml`, `cargo run` from within its directory, no relation to `requirements.txt`. See its README for the one extra setup step (installing the `mqtt-mcp` binary it drives).
+
 ## Examples
 
 | # | Example | Proves | Status |
@@ -24,11 +26,11 @@ Each example also documents its own dependencies in its README — most need not
 | 06 | [`load_aggregator_config`](06_load_aggregator_config/) | `aggregator.json` parsing | written |
 | 07 | [`specialist_memory_persistence`](07_specialist_memory_persistence/) | file-based specialist memory across processes | written |
 | 08 | [`fault_mode_topology_change`](08_fault_mode_topology_change/) | topology-as-source-of-truth, both directions | written |
-| 09 | [`hello_adapter`](09_hello_adapter/) | protocol layer in isolation (MQTT read → VQT envelope) | not yet written — mqtt-mcp itself is ready; needs a broker + MCP client harness decision, see its README |
+| 09 | [`hello_adapter`](09_hello_adapter/) | protocol layer in isolation (MQTT read → VQT envelope) | written |
 
 ## Conventions
 
-- Every example is self-contained: one directory, one script (plus fixtures), one README.
+- Every example is self-contained: one directory, one script or crate (plus fixtures), one README.
 - Every README states what the example proves, what it deliberately does **not** touch, and the expected output.
 - No example should take more than a minute to run from a clean checkout.
 - Examples depend on published `fieldworks-core`, not on being run from inside the monorepo. Point `requirements.txt` at `-e ../core` only for local iteration against unreleased core changes.
