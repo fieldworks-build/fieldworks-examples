@@ -6,6 +6,25 @@
 
 **Depends on:** `fieldworks.memory.specialist.SpecialistMemory`.
 
-**Status:** not yet written.
+## Run
 
-**Plan:** two scripts — `write.py` writes a memory entry and exits; `read.py`, run as a genuinely separate process afterward, reads it back and prints it.
+```bash
+python write.py
+python read.py
+```
+
+Run them as two separate `python` invocations, not two calls in one script — the point is that `read.py` has no in-memory state left over from `write.py`, only the file on disk.
+
+## Expected output
+
+```
+$ python write.py
+wrote a memory entry for 'pumping'. Now run: python read.py
+
+$ python read.py
+
+## 2026-07-12 21:50 UTC
+Pump 102 showed early cavitation signs during afternoon peak demand — flagged for bearing inspection at next PM cycle.
+```
+
+`SpecialistMemory` is one markdown file per specialist (`memory/pumping.md` here, gitignored — delete freely, it regenerates). `append()` timestamps and appends; `get()` just reads the whole file back as a string. Run `write.py` a second time before `read.py` and you'll see both entries — this is accumulation, not a single overwritten value.

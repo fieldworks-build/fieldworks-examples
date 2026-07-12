@@ -10,3 +10,6 @@ __pycache__/
 *.db-shm
 *.jsonl
 uv.lock
+
+# generated demo output
+07_specialist_memory_persistence/memory/
