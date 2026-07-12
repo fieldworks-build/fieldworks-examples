@@ -17,7 +17,7 @@ Each example also documents its own dependencies in its README — most need not
 | # | Example | Proves | Status |
 |---|---|---|---|
 | 01 | [`hello_topology`](01_hello_topology/) | `topology.load()` + `validate()` happy path | written |
-| 02 | [`topology_validation_catches_errors`](02_topology_validation_catches_errors/) | `validate()` actually rejects bad input | not yet written |
+| 02 | [`topology_validation_catches_errors`](02_topology_validation_catches_errors/) | `load()`/`validate()` actually reject bad input | written |
 | 03 | [`propose_approve_execute`](03_propose_approve_execute/) | trust/safety intercept pattern (`fieldworks.trust`) | not yet written |
 | 04 | [`build_specialist_prompt`](04_build_specialist_prompt/) | topology → specialist system prompt | not yet written |
 | 05 | [`scoped_tools`](05_scoped_tools/) | aggregator `include_tools` filtering | not yet written |
