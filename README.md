@@ -24,7 +24,7 @@ Each example also documents its own dependencies in its README — most need not
 | 06 | [`load_aggregator_config`](06_load_aggregator_config/) | `aggregator.json` parsing | written |
 | 07 | [`specialist_memory_persistence`](07_specialist_memory_persistence/) | file-based specialist memory across processes | written |
 | 08 | [`fault_mode_topology_change`](08_fault_mode_topology_change/) | topology-as-source-of-truth, both directions | written |
-| 09 | [`hello_adapter`](09_hello_adapter/) | protocol layer in isolation (MQTT read → VQT envelope) | blocked on Rust adapter readiness |
+| 09 | [`hello_adapter`](09_hello_adapter/) | protocol layer in isolation (MQTT read → VQT envelope) | not yet written — mqtt-mcp itself is ready; needs a broker + MCP client harness decision, see its README |
 
 ## Conventions
 
