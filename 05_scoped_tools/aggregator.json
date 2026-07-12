@@ -1,0 +1,9 @@
+[
+  {
+    "name": "control",
+    "url": "http://localhost:8005",
+    "include_tools": ["propose_action"],
+    "default_args": { "operator_id": "operator-01" },
+    "description": "Write-back control server, scoped to proposal-only for this specialist."
+  }
+]
