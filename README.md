@@ -21,7 +21,7 @@ Each example also documents its own dependencies in its README — most need not
 | 03 | [`propose_approve_execute`](03_propose_approve_execute/) | trust/safety intercept pattern (`fieldworks.trust`) | written |
 | 04 | [`build_specialist_prompt`](04_build_specialist_prompt/) | topology → specialist system prompt | written |
 | 05 | [`scoped_tools`](05_scoped_tools/) | aggregator `include_tools` filtering | written |
-| 06 | [`load_aggregator_config`](06_load_aggregator_config/) | `aggregator.json` parsing | not yet written |
+| 06 | [`load_aggregator_config`](06_load_aggregator_config/) | `aggregator.json` parsing | written |
 | 07 | [`specialist_memory_persistence`](07_specialist_memory_persistence/) | file-based specialist memory across processes | not yet written |
 | 08 | [`fault_mode_topology_change`](08_fault_mode_topology_change/) | topology-as-source-of-truth, both directions | not yet written |
 | 09 | [`hello_adapter`](09_hello_adapter/) | protocol layer in isolation (MQTT read → VQT envelope) | blocked on Rust adapter readiness |

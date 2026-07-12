@@ -1,0 +1,13 @@
+[
+  {
+    "name": "mqtt",
+    "url": "http://localhost:8001",
+    "description": "MQTT protocol adapter — nine-tool MCP surface."
+  },
+  {
+    "name": "opcua",
+    "url": "http://localhost:8002",
+    "description": "OPC-UA protocol adapter — nine-tool MCP surface.",
+    "timeout_ms": 10000
+  }
+]
