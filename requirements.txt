@@ -1,4 +1,4 @@
 # Covers every example in this repo.
 # For local iteration against an unreleased core change, replace this line with:
 #   -e ../core[trust]
-fieldworks-core[trust]>=1.0.0
+fieldworks-core[trust]>=1.0.3
