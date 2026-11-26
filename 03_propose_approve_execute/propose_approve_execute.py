@@ -2,7 +2,9 @@
 
 No UI, no MCP server, no waterworks-ai — just fieldworks.trust driving a
 fake write action through propose -> intercept -> operator decision ->
-execute (or not), with both outcomes recorded with equal fidelity.
+execute (or not), with both outcomes recorded with equal fidelity. A third
+action runs under AUTONOMOUS to show how the record tells the mode's
+approval from a person's.
 """
 
 import asyncio
@@ -10,15 +12,23 @@ from pathlib import Path
 
 from fieldworks.trust.audit import AuditLog, AuditLogConfig
 from fieldworks.trust.events import ActionEventStore, ActionEventStoreConfig
+from fieldworks.trust.identity import dispatch_approver
 from fieldworks.trust.intercept import (
     PendingActionRegistry,
     ProposedAction,
     format_decision_result,
 )
+from fieldworks.trust.modes import TrustMode, resolve_disposition
 
 HERE = Path(__file__).parent
 SESSION_ID = "demo-session-01"
-OPERATOR_ID = "operator-01"
+# Who decides, and how the deployment knows (spec Part I, Operator identity).
+# The decisions here stand in for one person at a console who signed in as
+# "alice". A real host records the person it actually authenticated, or a
+# documented shared value such as "shared-token" with auth_method
+# "shared_credential" when everyone approves with one credential. Never a
+# placeholder person like "operator-01".
+OPERATOR = {"operator_id": "alice", "auth_method": "user"}
 
 
 def execute(action: ProposedAction) -> None:
@@ -43,15 +53,17 @@ async def run_proposal(
         action_type=action.action_type,
         target=action.target,
         value=action.value,
+        **OPERATOR,
     )
+    # The pending row names the operator the proposal now waits on.
     events.log_action_event(
         session_id=SESSION_ID,
         action_type=action.action_type,
         target=action.target,
         value=action.value,
         description=action.description,
-        operator_id=OPERATOR_ID,
         decision="pending",
+        **OPERATOR,
     )
 
     # The agent's propose_action call blocks here until an operator decides —
@@ -63,16 +75,19 @@ async def run_proposal(
     registry.resolve(action.action_id, operator_decision)
     decision = await wait_task
 
-    audit.log("action_decided", action_id=action.action_id, decision=decision)
+    # Both sinks get the same three fields, so they agree on who decided.
+    audit.log(
+        "action_decided", action_id=action.action_id, decision=decision, **OPERATOR
+    )
     events.log_action_event(
         session_id=SESSION_ID,
         action_type=action.action_type,
         target=action.target,
         value=action.value,
         description=action.description,
-        operator_id=OPERATOR_ID,
-        decision=decision,
         outcome=decision,
+        decision=decision,
+        **OPERATOR,
     )
 
     print(f"  {format_decision_result(action, decision)}")
@@ -80,6 +95,30 @@ async def run_proposal(
         execute(action)
     else:
         print("    -> NOT executed. Denial recorded with the same fidelity as approval.")
+
+
+def run_autonomous(audit: AuditLog, events: ActionEventStore, args: dict) -> None:
+    """AUTONOMOUS: dispatch approves without a person, so there is no
+    intercept. The record names the mode, never a person:
+    operator_id="trust-mode:autonomous", auth_method="trust_mode"."""
+    action = ProposedAction.from_tool_input(args)
+    mode = TrustMode.AUTONOMOUS
+    approver = dispatch_approver(mode, resolve_disposition(mode))
+    print(f"\nagent proposes: {action.description}")
+    print(f"trust mode {mode.value} decides: {approver['decision']}")
+
+    audit.log("action_decided", action_id=action.action_id, **approver)
+    events.log_action_event(
+        session_id=SESSION_ID,
+        action_type=action.action_type,
+        target=action.target,
+        value=action.value,
+        description=action.description,
+        outcome=approver["decision"],
+        **approver,
+    )
+    print(f"  {format_decision_result(action, approver['decision'])}")
+    execute(action)
 
 
 async def main() -> None:
@@ -114,6 +153,17 @@ async def main() -> None:
         operator_decision="denied",
     )
 
+    run_autonomous(
+        audit,
+        events,
+        args={
+            "description": "Raise backwash pump speed to 60%",
+            "action_type": "setpoint_adjustment",
+            "target": "Backwash_01",
+            "value": "60",
+        },
+    )
+
     print("\n--- audit trail (hash-chained) ---")
     verify = audit.verify()
     print(f"verify: ok={verify.ok}, records={verify.record_count}")
@@ -121,8 +171,8 @@ async def main() -> None:
     print("\n--- action events (denial parity, same table for both decisions) ---")
     for row in events.get_action_events(session_id=SESSION_ID):
         print(
-            f"  {row['action_type']:<20} {row['target']:<12} "
-            f"decision={row['decision']:<10} outcome={row['outcome']}"
+            f"  {row['target']:<12} decision={row['decision']:<14} "
+            f"by {row['operator_id']} ({row['auth_method']})"
         )
 
 
