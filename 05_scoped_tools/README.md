@@ -20,7 +20,7 @@ include_tools scope:     ['propose_action']
 specialist actually sees: ['propose_action']
 force_execute is not in the resolved tool list — the specialist has no way to call it.
 
-propose_action call args, with default_args merged in: {'operator_id': 'operator-01', 'target': 'Chlorine_01', 'value': '2.8'}
+propose_action call args, with default_args merged in: {'operator_id': 'shared-token', 'target': 'Chlorine_01', 'value': '2.8'}
 ```
 
-This is one of the strongest architectural claims Fieldworks makes: a specialist's tool scope isn't a prompt-level instruction the model could ignore or be jailbroken past — it's a filtered list the model's context never contains `force_execute` in. `default_args` shows the complementary half: values like `operator_id` are injected by the aggregator config, not left for the specialist to supply (or omit) itself.
+This is one of the strongest architectural claims Fieldworks makes: a specialist's tool scope isn't a prompt-level instruction the model could ignore or be jailbroken past — it's a filtered list the model's context never contains `force_execute` in. `default_args` shows the complementary half: values like `operator_id` are injected by the aggregator config, not left for the specialist to supply (or omit) itself. The value here is `shared-token`: a value the deployment injects into every call names a shared credential, never a person (spec Part I, Operator identity).
